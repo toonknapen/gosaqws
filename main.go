@@ -6,9 +6,14 @@ import (
 	"net/url"
 )
 
+type PassMark struct {
+	Lap   int `json:"lap"`
+	Time  int `json:"time"`
+	Total int `json:"total"`
+}
 
 func main() {
-	u := url.URL{Scheme: "ws", Host: "localhost:9876", Path: "/saqws"}
+	u := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/ws"}
 	log.Printf("Connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
@@ -17,11 +22,24 @@ func main() {
 	}
 	defer c.Close()
 
-	for i:=0 ; i < 300 ; i++ {
+	for i := 0; i < 300; i++ {
+		var hello = []byte{'h', 'e', 'l'}
+		werr := c.WriteMessage(websocket.TextMessage, hello)
+		if werr != nil {
+			log.Println(werr)
+			return
+		}
 		_, message, err := c.ReadMessage()
 		if err != nil {
 			log.Println("readmessage error", err)
 		}
 		log.Printf("recv: %s", message)
+
+		//var passmarks []PassMark
+		//err = json.Unmarshal(message, &passmarks)
+		//if err != nil {
+		//	panic(err)
+		//}
+		//log.Printf("f{passmarks}")
 	}
 }
