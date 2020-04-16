@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+// Server is a small wrapper around http.Server
+//
+// This wrapper provides just convenience functions to launch and shutdown (something that is forgotten
+// in many applications) the webserver easily.
 type Server struct {
 	srv *http.Server
 }
