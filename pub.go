@@ -87,7 +87,6 @@ func sendCurrentSessionBacklog(clientConn *websocket.Conn, cursorStart int) (cur
 			log.Println("ERROR:marshalling slice of q:", err)
 			return cursorStart, err
 		}
-		log.Println("writing:", string(raw))
 		err = clientConn.WriteMessage(websocket.TextMessage, raw)
 	}
 	return cursor, err
