@@ -10,7 +10,7 @@ import (
 )
 
 type Sub struct {
-	OnMessageFn func(msg []byte)
+	OnMessageFn func(msg json.RawMessage)
 	shutdown    bool
 	conn        *websocket.Conn
 }
@@ -44,7 +44,7 @@ func (sub *Sub) ConnectSub(scheme string, host string, port int, path string) {
 			return
 		}
 
-		var events [][]byte
+		var events []json.RawMessage
 		err = json.Unmarshal(data, &events)
 
 		if sub.OnMessageFn != nil {

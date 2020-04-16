@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"time"
 
@@ -20,8 +21,9 @@ func main() {
 		events := []string{"one", "two", "three", "four", "five", "six"}
 		numEvents := len(events)
 		for eventId := 0; eventId < numEvents; eventId++ {
+			data, _ := json.Marshal(events[eventId])
 			log.Println("Appending", events[eventId])
-			gosaqws.Append([]byte(events[eventId]))
+			gosaqws.Append(data)
 			time.Sleep(time.Second)
 		}
 	}

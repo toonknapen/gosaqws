@@ -12,7 +12,7 @@ import (
 type Pub struct {
 	m         sync.RWMutex
 	sessionId int
-	q         [][]byte
+	q         []json.RawMessage
 }
 
 var pub Pub
@@ -35,7 +35,7 @@ func NewSession() {
 }
 
 // Append a range of bytes to the queue of messages to be published
-func Append(data []byte) {
+func Append(data json.RawMessage) {
 	pub.m.RLock()
 	defer pub.m.RUnlock()
 	pub.q = append(pub.q, data)

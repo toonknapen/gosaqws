@@ -1,13 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/toonknapen/gosaqws"
 )
 
-func OnMessage(data []byte) {
-	log.Println(string(data))
+func OnMessage(data json.RawMessage) {
+	var msg string
+	json.Unmarshal(data, &msg)
+	log.Println(msg)
 }
 
 func main() {
