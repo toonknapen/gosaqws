@@ -15,13 +15,24 @@ type Server struct {
 func (server *Server) Launch(port int) {
 	addr := fmt.Sprintf(":%d", port)
 	server.srv = &http.Server{Addr: addr}
-	go server.srv.ListenAndServe()
+	go func() {
+		err := server.srv.ListenAndServe()
+		if err != nil {
+			log.Println("ERROR in http.Server.ListenAndServe:", err)
+		}
+	}()
 }
 
 func (server *Server) LaunchTLS(port int, crtFile string, keyFile string) {
 	addr := fmt.Sprintf(":%d", port)
 	server.srv = &http.Server{Addr: addr}
-	go server.srv.ListenAndServeTLS(crtFile, keyFile)
+	go func() {
+		err := server.srv.ListenAndServeTLS(crtFile, keyFile)
+		if err != nil {
+			log.Println("ERROR in http.Server.ListenAndServeTLS:", err)
+		}
+	}()
+
 }
 
 func (server *Server) Shutdown() {
