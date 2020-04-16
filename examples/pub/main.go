@@ -10,8 +10,7 @@ import (
 func main() {
 	gosaqws.Install("/saqws")
 
-	var srv gosaqws.Server
-	srv.Launch(9876)
+	srv := gosaqws.Launch(9876)
 	log.Println("launched")
 
 	numSessions := 50

@@ -16,7 +16,10 @@ type Server struct {
 	srv *http.Server
 }
 
-func (server *Server) Launch(port int) {
+// Launch returns a handle to the server
+//
+// The handle is needed to Shutdown the server later
+func Launch(port int) (server Server) {
 	addr := fmt.Sprintf(":%d", port)
 	server.srv = &http.Server{Addr: addr}
 	go func() {
@@ -25,9 +28,13 @@ func (server *Server) Launch(port int) {
 			log.Println("ERROR in http.Server.ListenAndServe:", err)
 		}
 	}()
+	return server
 }
 
-func (server *Server) LaunchTLS(port int, crtFile string, keyFile string) {
+// Launch returns a handle to the server
+//
+// The handle is needed to Shutdown the server later
+func LaunchTLS(port int, crtFile string, keyFile string) (server Server) {
 	addr := fmt.Sprintf(":%d", port)
 	server.srv = &http.Server{Addr: addr}
 	go func() {
@@ -36,7 +43,7 @@ func (server *Server) LaunchTLS(port int, crtFile string, keyFile string) {
 			log.Println("ERROR in http.Server.ListenAndServeTLS:", err)
 		}
 	}()
-
+	return server
 }
 
 func (server *Server) Shutdown() {
@@ -47,5 +54,6 @@ func (server *Server) Shutdown() {
 		if err != nil {
 			log.Printf("Error while shutting down webserver")
 		}
+		server.srv = nil
 	}
 }
