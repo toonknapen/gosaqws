@@ -16,10 +16,16 @@ type Pub struct {
 
 var pub Pub
 
+// Install the handler for the publisher at the specified path in the web-server
+//
+// Instead of calling Install, the `HandleSAQWS` can also be installed directly
 func Install(path string) {
 	http.HandleFunc(path, HandleSAQWS)
 }
 
+// NewSession starts a new session for the publisher
+//
+// All messages that were previously appended are deleted.
 func NewSession() {
 	pub.m.Lock()
 	defer pub.m.Unlock()
@@ -27,6 +33,7 @@ func NewSession() {
 	pub.q = nil
 }
 
+// Append a range of bytes to the queue of messages to be published
 func Append(data []byte) {
 	pub.m.RLock()
 	defer pub.m.RUnlock()
