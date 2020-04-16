@@ -1,4 +1,4 @@
-module gosaqws
+module github.com/toonknapen/gosaqws
 
 go 1.13
 

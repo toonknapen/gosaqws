@@ -1,8 +1,9 @@
 package main
 
 import (
-	gosaqws2 "gosaqws"
 	"log"
+
+	"github.com/toonknapen/gosaqws"
 )
 
 func OnMessage(data []byte) {
@@ -10,7 +11,7 @@ func OnMessage(data []byte) {
 }
 
 func main() {
-	var sub gosaqws2.Sub
+	var sub gosaqws.Sub
 	sub.OnMessageFn = OnMessage
 	sub.ConnectSub("ws", "localhost", 9876, "/saqws")
 }

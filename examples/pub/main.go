@@ -1,26 +1,27 @@
 package main
 
 import (
-	gosaqws2 "gosaqws"
 	"log"
 	"time"
+
+	"github.com/toonknapen/gosaqws"
 )
 
 func main() {
-	gosaqws2.Install("/saqws")
+	gosaqws.Install("/saqws")
 
-	var srv gosaqws2.Server
+	var srv gosaqws.Server
 	srv.Launch(9876)
 	log.Println("launched")
 
 	numSessions := 50
 	for sessionId := 0; sessionId < numSessions; sessionId++ {
-		gosaqws2.NewSession()
+		gosaqws.NewSession()
 
 		events := []string{"one", "two", "three", "four", "five", "six"}
 		numEvents := len(events)
 		for eventId := 0; eventId < numEvents; eventId++ {
-			gosaqws2.Append([]byte(events[eventId]))
+			gosaqws.Append([]byte(events[eventId]))
 			time.Sleep(time.Second)
 		}
 	}
