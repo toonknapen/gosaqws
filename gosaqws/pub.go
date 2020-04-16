@@ -10,7 +10,7 @@ import (
 
 type Pub struct {
 	m         sync.RWMutex
-	sessionId int32
+	sessionId int
 	q         [][]byte
 }
 
@@ -41,7 +41,12 @@ func HandleSAQWS(w http.ResponseWriter, r *http.Request) {
 		log.Println("upgrade error:", err)
 		return
 	}
-	defer clientConn.Close()
+	defer func() {
+		err := clientConn.Close()
+		if err != nil {
+			log.Println("ERROR while closing websocket:", err)
+		}
+	}()
 
 	// catch up on all that is already available in the session
 	pub.m.RLock()
@@ -61,20 +66,14 @@ func HandleSAQWS(w http.ResponseWriter, r *http.Request) {
 			sessionId = pub.sessionId
 		}
 
-		numMsgAvailable := len(pub.q)
-		if cursor < numMsgAvailable {
-			for ; cursor < numMsgAvailable; cursor++ {
-				err = clientConn.WriteMessage(websocket.TextMessage, pub.q[cursor])
-			}
-		}
-
+		cursor, err = sendCurrentSessionBacklog(clientConn, cursor)
 		pub.m.RUnlock()
 	}
 }
 
 func sendCurrentSessionBacklog(clientConn *websocket.Conn, cursorStart int) (cursor int, err error) {
 	numMsgTotal := len(pub.q)
-	for ; cursor < numMsgTotal; cursor++ {
+	for cursor = cursorStart; cursor < numMsgTotal; cursor++ {
 		log.Println(string(pub.q[cursor]))
 		err = clientConn.WriteMessage(websocket.TextMessage, pub.q[cursor])
 	}
