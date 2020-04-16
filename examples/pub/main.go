@@ -20,6 +20,7 @@ func main() {
 		events := []string{"one", "two", "three", "four", "five", "six"}
 		numEvents := len(events)
 		for eventId := 0; eventId < numEvents; eventId++ {
+			log.Println("Appending", events[eventId])
 			gosaqws.Append([]byte(events[eventId]))
 			time.Sleep(time.Second)
 		}

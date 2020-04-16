@@ -1,6 +1,7 @@
 package gosaqws
 
 import (
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -79,10 +80,15 @@ func HandleSAQWS(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendCurrentSessionBacklog(clientConn *websocket.Conn, cursorStart int) (cursor int, err error) {
-	numMsgTotal := len(pub.q)
-	for cursor = cursorStart; cursor < numMsgTotal; cursor++ {
-		log.Println(string(pub.q[cursor]))
-		err = clientConn.WriteMessage(websocket.TextMessage, pub.q[cursor])
+	cursor = len(pub.q)
+	if cursorStart < cursor {
+		raw, err := json.Marshal(pub.q[cursorStart:cursor])
+		if err != nil {
+			log.Println("ERROR:marshalling slice of q:", err)
+			return cursorStart, err
+		}
+		log.Println("writing:", string(raw))
+		err = clientConn.WriteMessage(websocket.TextMessage, raw)
 	}
 	return cursor, err
 }

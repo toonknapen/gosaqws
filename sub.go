@@ -1,6 +1,7 @@
 package gosaqws
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
@@ -43,8 +44,13 @@ func (sub *Sub) ConnectSub(scheme string, host string, port int, path string) {
 			return
 		}
 
+		var events [][]byte
+		err = json.Unmarshal(data, &events)
+
 		if sub.OnMessageFn != nil {
-			sub.OnMessageFn(data)
+			for _, data := range events {
+				sub.OnMessageFn(data)
+			}
 		}
 	}
 }
