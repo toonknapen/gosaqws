@@ -36,8 +36,8 @@ func NewSession() {
 
 // Append a range of bytes to the queue of messages to be published
 func Append(data json.RawMessage) {
-	pub.m.RLock()
-	defer pub.m.RUnlock()
+	pub.m.Lock()
+	defer pub.m.Unlock()
 	pub.q = append(pub.q, data)
 }
 
