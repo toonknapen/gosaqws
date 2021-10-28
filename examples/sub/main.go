@@ -14,7 +14,7 @@ func OnMessage(data json.RawMessage) {
 }
 
 func main() {
-	var sub gosaqws.Sub
+	var sub gosaqws.SubStub
 	sub.OnMessageFn = OnMessage
 	sub.ConnectSub("ws", "localhost", 9876, "/saqws")
 }

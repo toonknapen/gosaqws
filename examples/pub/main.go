@@ -9,21 +9,22 @@ import (
 )
 
 func main() {
-	gosaqws.Install("/saqws")
+	p := gosaqws.PubStub{}
+	gosaqws.Install("/saqws", &p)
 
 	srv := gosaqws.Launch(9876)
 	log.Println("launched")
 
 	numSessions := 50
 	for sessionId := 0; sessionId < numSessions; sessionId++ {
-		gosaqws.NewSession()
+		p.NewSession()
 
 		events := []string{"one", "two", "three", "four", "five", "six"}
 		numEvents := len(events)
 		for eventId := 0; eventId < numEvents; eventId++ {
 			data, _ := json.Marshal(events[eventId])
 			log.Println("Appending", events[eventId])
-			gosaqws.Append(data)
+			p.Append(data)
 			time.Sleep(time.Second)
 		}
 	}

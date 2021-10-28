@@ -3,19 +3,22 @@ package gosaqws
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
-type Sub struct {
+// SubStub connects to the publisher at the given address and call the
+// OnMessageFn callback for every message received
+type SubStub struct {
 	OnMessageFn func(msg json.RawMessage)
 	shutdown    bool
 	conn        *websocket.Conn
 }
 
-func (sub *Sub) ConnectSub(scheme string, host string, port int, path string) {
+func (s *SubStub) ConnectSub(scheme string, host string, port int, path string) {
 	hostPort := fmt.Sprintf("%s:%d", host, port)
 	pubUrl := url.URL{Scheme: scheme, Host: hostPort, Path: path}
 
@@ -37,7 +40,7 @@ func (sub *Sub) ConnectSub(scheme string, host string, port int, path string) {
 		log.Println("ERROR: Failed closing the ws to the connector but was going to stop listening anyway", err)
 	}()
 
-	for !sub.shutdown {
+	for !s.shutdown {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("error with ws connection to conn:", err)
@@ -47,15 +50,15 @@ func (sub *Sub) ConnectSub(scheme string, host string, port int, path string) {
 		var events []json.RawMessage
 		err = json.Unmarshal(data, &events)
 
-		if sub.OnMessageFn != nil {
+		if s.OnMessageFn != nil {
 			for _, data := range events {
-				sub.OnMessageFn(data)
+				s.OnMessageFn(data)
 			}
 		}
 	}
 }
 
-func (sub *Sub) Disconnect() {
-	sub.shutdown = true
-	sub.conn.Close()
+func (s *SubStub) Disconnect() {
+	s.shutdown = true
+	s.conn.Close()
 }
